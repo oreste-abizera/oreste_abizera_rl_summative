@@ -2,16 +2,7 @@
 main.py — Entry point for the Code Mentorship RL project.
 
 Loads and runs the best-performing trained model (PPO by default,
-with fallback chain: PPO → DQN → A2C → REINFORCE → Random).
-
-Usage:
-    python main.py                        # auto-select best model
-    python main.py --algo ppo             # select specific algorithm
-    python main.py --algo dqn --no-render # headless run
-    python main.py --episodes 5 --seed 7  # multiple episodes
-
-Flags:
-    --algo     [ppo|dqn|a2c|reinforce|random]
+    --algo     [ppo|dqn|reinforce|random]
     --episodes Number of episodes to run (default: 3)
     --seed     Random seed (default: 0)
     --no-render  Disable pygame window
@@ -63,20 +54,6 @@ def _load_dqn():
     return model, "DQN", info
 
 
-def _load_a2c():
-    from stable_baselines3 import A2C
-    from stable_baselines3.common.monitor import Monitor
-
-    info_path = "models/pg/a2c/best_run.json"
-    if not os.path.exists(info_path):
-        raise FileNotFoundError(info_path)
-    with open(info_path) as f:
-        info = json.load(f)
-    env = Monitor(CodeMentorshipEnv())
-    model = A2C.load(f"models/pg/a2c/a2c_run{info['run']}", env=env)
-    return model, "A2C", info
-
-
 def _load_reinforce():
     info_path = "models/pg/reinforce/best_run.json"
     if not os.path.exists(info_path):
@@ -98,11 +75,10 @@ def _load_reinforce():
 LOADER_MAP = {
     "ppo":       _load_ppo,
     "dqn":       _load_dqn,
-    "a2c":       _load_a2c,
     "reinforce": _load_reinforce,
 }
 
-FALLBACK_ORDER = ["ppo", "dqn", "a2c", "reinforce"]
+FALLBACK_ORDER = ["ppo", "dqn", "reinforce"]
 
 
 def load_model(algo: str):
@@ -209,7 +185,7 @@ def main():
         description="Run the best RL agent on the Code Mentorship environment."
     )
     parser.add_argument("--algo", default="auto",
-                        choices=["auto", "ppo", "dqn", "a2c", "reinforce", "random"])
+                        choices=["auto", "ppo", "dqn", "reinforce", "random"])
     parser.add_argument("--episodes", type=int, default=3)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--no-render", action="store_true",

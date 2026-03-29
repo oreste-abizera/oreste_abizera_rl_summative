@@ -25,7 +25,7 @@ from matplotlib.gridspec import GridSpec
 import torch
 import torch.nn as nn
 
-from stable_baselines3 import DQN, PPO, A2C
+from stable_baselines3 import DQN, PPO
 from stable_baselines3.common.monitor import Monitor
 
 from environment.custom_env import CodeMentorshipEnv
@@ -74,23 +74,6 @@ def load_best_ppo():
         return model, info
     except Exception as e:
         print(f"[warn] PPO load failed: {e}")
-        return None, None
-
-
-def load_best_a2c():
-    info_path = os.path.join(MODEL_DIR, "pg", "a2c", "best_run.json")
-    if not os.path.exists(info_path):
-        return None, None
-    with open(info_path) as f:
-        info = json.load(f)
-    run = info["run"]
-    model_path = os.path.join(MODEL_DIR, "pg", "a2c", f"a2c_run{run}")
-    try:
-        env = Monitor(CodeMentorshipEnv())
-        model = A2C.load(model_path, env=env)
-        return model, info
-    except Exception as e:
-        print(f"[warn] A2C load failed: {e}")
         return None, None
 
 
@@ -236,13 +219,11 @@ def plot_convergence_comparison():
         "DQN": "#5096ff",
         "REINFORCE": "#c880ff",
         "PPO": "#50c8a0",
-        "A2C": "#ffaa40",
     }
     algo_files = {
         "DQN": os.path.join(PLOT_DIR, "dqn_results.csv"),
         "REINFORCE": os.path.join(PLOT_DIR, "reinforce_results.csv"),
         "PPO": os.path.join(PLOT_DIR, "ppo_results.csv"),
-        "A2C": os.path.join(PLOT_DIR, "a2c_results.csv"),
     }
 
     for algo, fpath in algo_files.items():
@@ -340,7 +321,6 @@ def run_evaluation():
 
     dqn_model, _ = load_best_dqn()
     ppo_model, _ = load_best_ppo()
-    a2c_model, _ = load_best_a2c()
     reinforce_net, _ = load_best_reinforce()
 
     models_dict = {}
@@ -351,8 +331,6 @@ def run_evaluation():
         models_dict["REINFORCE"] = (lambda s: run_reinforce_episode(reinforce_net, s), "#c880ff")
     if ppo_model is not None:
         models_dict["PPO"] = (lambda s: run_sb3_episode(ppo_model, s), "#50c8a0")
-    if a2c_model is not None:
-        models_dict["A2C"] = (lambda s: run_sb3_episode(a2c_model, s), "#ffaa40")
 
     models_dict["Random"] = (run_random_episode, "#888888")
 

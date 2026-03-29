@@ -1,7 +1,7 @@
 """
-pg_training.py — Train REINFORCE, PPO, and A2C on the Code Mentorship Environment.
+pg_training.py — Train REINFORCE and PPO on the Code Mentorship Environment.
 
-Uses Stable-Baselines3 for PPO and A2C.
+Uses Stable-Baselines3 for PPO.
 REINFORCE is implemented from scratch (SB3 does not ship REINFORCE).
 
 Each algorithm runs 10 hyperparameter combinations.
@@ -28,7 +28,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from stable_baselines3 import PPO, A2C
+from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.callbacks import BaseCallback
@@ -37,10 +37,9 @@ from environment.custom_env import CodeMentorshipEnv
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
 MODEL_DIR_PPO = "models/pg/ppo"
-MODEL_DIR_A2C = "models/pg/a2c"
 MODEL_DIR_REINFORCE = "models/pg/reinforce"
 PLOT_DIR = "plots"
-for d in [MODEL_DIR_PPO, MODEL_DIR_A2C, MODEL_DIR_REINFORCE, PLOT_DIR]:
+for d in [MODEL_DIR_PPO, MODEL_DIR_REINFORCE, PLOT_DIR]:
     os.makedirs(d, exist_ok=True)
 
 TRAIN_STEPS = 80_000
@@ -323,71 +322,6 @@ def train_ppo_run(run_id: int, params: tuple) -> dict:
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-#  A2C
-# ═══════════════════════════════════════════════════════════════════════════════
-
-A2C_GRID = [
-    # lr,   gamma, n_steps, ent_coef, vf_coef, rms_eps, arch
-    (7e-4, 0.99, 5, 0.01, 0.5, 1e-5, [64, 64]),
-    (3e-4, 0.99, 5, 0.01, 0.5, 1e-5, [128, 128]),
-    (7e-4, 0.95, 5, 0.05, 0.5, 1e-5, [64, 64]),
-    (7e-4, 0.99, 10,0.01, 0.5, 1e-5, [64, 64]),
-    (1e-3, 0.99, 5, 0.01, 0.5, 1e-4, [128, 64]),
-    (7e-4, 0.99, 5, 0.00, 0.5, 1e-5, [256, 256]),
-    (5e-4, 0.95, 5, 0.02, 1.0, 1e-5, [64, 64]),
-    (7e-4, 0.90, 5, 0.01, 0.5, 1e-5, [64, 64]),
-    (7e-4, 0.99, 20,0.01, 0.5, 1e-5, [64, 64]),
-    (2e-4, 0.99, 5, 0.03, 0.5, 1e-5, [128, 128]),
-]
-
-
-def train_a2c_run(run_id: int, params: tuple) -> dict:
-    lr, gamma, n_steps, ent_coef, vf_coef, rms_eps, arch = params
-
-    print(f"\n[A2C Run {run_id+1}/10] lr={lr} gamma={gamma} n_steps={n_steps} "
-          f"ent_coef={ent_coef} vf_coef={vf_coef}")
-
-    env = make_env(seed=run_id)
-    eval_env = make_env(seed=run_id + 300)
-    callback = EntropyRewardLogger(log_freq=2000)
-
-    model = A2C(
-        "MlpPolicy", env,
-        learning_rate=lr, gamma=gamma, n_steps=n_steps,
-        ent_coef=ent_coef, vf_coef=vf_coef, rms_prop_eps=rms_eps,
-        policy_kwargs={"net_arch": [{"pi": arch, "vf": arch}]},
-        verbose=0, seed=run_id, device="cpu",
-    )
-
-    t0 = time.time()
-    model.learn(TRAIN_STEPS, callback=callback, progress_bar=False)
-    train_time = time.time() - t0
-
-    mean_reward, std_reward = evaluate_policy(
-        model, eval_env, n_eval_episodes=EVAL_EPISODES, deterministic=True
-    )
-
-    save_path = os.path.join(MODEL_DIR_A2C, f"a2c_run{run_id+1}")
-    model.save(save_path)
-
-    env.close(); eval_env.close()
-    print(f"  ↳ Mean Reward: {mean_reward:.3f} ± {std_reward:.3f}  "
-          f"| Time: {train_time:.1f}s")
-
-    return {
-        "run": run_id + 1,
-        "learning_rate": lr, "gamma": gamma, "n_steps": n_steps,
-        "ent_coef": ent_coef, "vf_coef": vf_coef, "rms_prop_eps": rms_eps,
-        "net_arch": str(arch),
-        "mean_reward": round(mean_reward, 3),
-        "std_reward": round(std_reward, 3),
-        "convergence_step": convergence_step(callback.rewards),
-        "train_time_s": round(train_time, 1),
-        "reward_curve": callback.rewards,
-        "entropy_curve": callback.entropy_vals,
-    }
-
-
 # ═══════════════════════════════════════════════════════════════════════════════
 #  Plotting helpers
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -463,17 +397,16 @@ def save_pg_csv(results: list, name: str):
     return df
 
 
-def plot_combined_comparison(reinforce_results, ppo_results, a2c_results):
+def plot_combined_comparison(reinforce_results, ppo_results):
     """Plot all algorithms' best runs side-by-side."""
     plt.style.use("dark_background")
-    fig, axes = plt.subplots(1, 3, figsize=(18, 5), facecolor="#0d1117")
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5), facecolor="#0d1117")
     fig.suptitle("Policy Gradient Methods — Best Run Comparison",
                  fontsize=14, color="#64dcff", fontfamily="monospace")
 
     algo_data = [
         ("REINFORCE", reinforce_results, "#c880ff", 50),
         ("PPO",       ppo_results,       "#50c8a0", 2000),
-        ("A2C",       a2c_results,       "#ffaa40", 2000),
     ]
 
     for ax, (name, results, color, freq) in zip(axes, algo_data):
@@ -514,7 +447,7 @@ def plot_combined_comparison(reinforce_results, ppo_results, a2c_results):
 def run_all():
     print("=" * 60)
     print("Policy Gradient Hyperparameter Sweep")
-    print("Algorithms: REINFORCE, PPO, A2C")
+    print("Algorithms: REINFORCE, PPO")
     print("=" * 60)
 
     # ── REINFORCE ──────────────────────────────────────────────────────────────
@@ -549,24 +482,8 @@ def run_all():
         json.dump({k: v for k, v in best_ppo.items()
                    if k not in ("reward_curve", "entropy_curve")}, f, indent=2)
 
-    # ── A2C ───────────────────────────────────────────────────────────────────
-    print("\n" + "─" * 40)
-    print("A2C")
-    print("─" * 40)
-    a2c_results = []
-    for i, params in enumerate(A2C_GRID):
-        a2c_results.append(train_a2c_run(i, params))
-    save_pg_csv(a2c_results, "a2c")
-    plot_algorithm_curves(a2c_results, "A2C", "#ffaa40", log_freq=2000)
-    plot_entropy_curves(a2c_results, "A2C", "#ffaa40")
-
-    best_a2c = max(a2c_results, key=lambda x: x["mean_reward"])
-    with open(os.path.join(MODEL_DIR_A2C, "best_run.json"), "w") as f:
-        json.dump({k: v for k, v in best_a2c.items()
-                   if k not in ("reward_curve", "entropy_curve")}, f, indent=2)
-
     # ── Combined comparison ────────────────────────────────────────────────────
-    plot_combined_comparison(reinforce_results, ppo_results, a2c_results)
+    plot_combined_comparison(reinforce_results, ppo_results)
 
     print("\n" + "=" * 60)
     print("POLICY GRADIENT SWEEP COMPLETE")
@@ -574,11 +491,9 @@ def run_all():
           f"| Reward: {best_r['mean_reward']:.3f}")
     print(f"  Best PPO:       Run {best_ppo['run']}  "
           f"| Reward: {best_ppo['mean_reward']:.3f}")
-    print(f"  Best A2C:       Run {best_a2c['run']}  "
-          f"| Reward: {best_a2c['mean_reward']:.3f}")
     print("=" * 60)
 
-    return reinforce_results, ppo_results, a2c_results
+    return reinforce_results, ppo_results
 
 
 if __name__ == "__main__":

@@ -19,7 +19,7 @@
 6. [How to Run (Step by Step)](#6-how-to-run-step-by-step)
    - [A — Visualise the environment (random agent, no training)](#a--visualise-the-environment-random-agent-no-training)
    - [B — Train DQN (10 hyperparameter runs)](#b--train-dqn-10-hyperparameter-runs)
-   - [C — Train Policy Gradient methods (REINFORCE + PPO + A2C)](#c--train-policy-gradient-methods-reinforce--ppo--a2c)
+   - [C — Train Policy Gradient methods (REINFORCE + PPO)](#c--train-policy-gradient-methods-reinforce--ppo)
    - [D — Evaluate and generate all report plots](#d--evaluate-and-generate-all-report-plots)
    - [E — Run the best agent (main entry point)](#e--run-the-best-agent-main-entry-point)
    - [F — Train everything in one command](#f--train-everything-in-one-command)
@@ -48,7 +48,6 @@ Four RL algorithms are compared:
 | DQN | Value-Based | Stable-Baselines3 |
 | REINFORCE | Policy Gradient | PyTorch (custom) |
 | PPO | Policy Gradient | Stable-Baselines3 |
-| A2C | Actor-Critic | Stable-Baselines3 |
 
 Each algorithm is evaluated over **10 hyperparameter combinations**.
 
@@ -65,7 +64,7 @@ oreste_abizera_rl_summative/
 ├── training/
 │   ├── __init__.py
 │   ├── dqn_training.py      # DQN: 10 runs, saves models + CSVs + plots
-│   └── pg_training.py       # REINFORCE / PPO / A2C: 10 runs each
+│   └── pg_training.py       # REINFORCE / PPO: 10 runs each
 ├── evaluation/
 │   ├── __init__.py
 │   └── evaluate.py          # Post-training evaluation + generalization
@@ -73,7 +72,6 @@ oreste_abizera_rl_summative/
 │   ├── dqn/                 # Saved DQN .zip models (after training)
 │   └── pg/
 │       ├── ppo/             # Saved PPO .zip models
-│       ├── a2c/             # Saved A2C .zip models
 │       └── reinforce/       # Saved REINFORCE .pt models
 ├── plots/                   # All generated plots + CSV tables
 ├── main.py                  # Run best-performing agent (entry point)
@@ -103,7 +101,7 @@ oreste_abizera_rl_summative/
 | Python | 3.10 |
 | pip | 23+ |
 | Operating System | Linux / macOS / Windows (WSL recommended on Windows) |
-| RAM | 4 GB (8 GB recommended for all 40 training runs) |
+| RAM | 4 GB (8 GB recommended for all 30 training runs) |
 | GPU | Optional — CPU is sufficient; all device flags set to `"cpu"` |
 
 > **Windows users:** Install [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install)
@@ -218,7 +216,7 @@ python training/dqn_training.py 2>&1 | tee logs/dqn_log.txt
 
 ---
 
-### C — Train Policy Gradient methods (REINFORCE + PPO + A2C)
+### C — Train Policy Gradient methods (REINFORCE + PPO)
 
 ```bash
 python training/pg_training.py
@@ -227,9 +225,8 @@ python training/pg_training.py
 **What this does:**
 - Trains REINFORCE (10 episodes-based runs, PyTorch custom implementation)
 - Trains PPO (10 runs, Stable-Baselines3)
-- Trains A2C (10 runs, Stable-Baselines3)
-- Saves all models under `models/pg/{ppo,a2c,reinforce}/`
-- Saves CSVs: `plots/reinforce_results.csv`, `plots/ppo_results.csv`, `plots/a2c_results.csv`
+- Saves all models under `models/pg/{ppo,reinforce}/`
+- Saves CSVs: `plots/reinforce_results.csv`, `plots/ppo_results.csv`
 - Saves reward curve plots per algorithm
 - Saves entropy curve plots per algorithm
 - Saves `plots/pg_comparison.png` — side-by-side best-run comparison
@@ -272,7 +269,6 @@ python main.py
 # Specific algorithm
 python main.py --algo ppo
 python main.py --algo dqn
-python main.py --algo a2c
 python main.py --algo reinforce
 python main.py --algo random
 
@@ -343,10 +339,7 @@ After a full training + evaluation run, the `plots/` directory contains:
 | `ppo_reward_curves.png` | PPO — all 10 curves |
 | `ppo_entropy.png` | PPO — entropy curve |
 | `ppo_results.csv` | PPO hyperparameter table |
-| `a2c_reward_curves.png` | A2C — all 10 curves |
-| `a2c_entropy.png` | A2C — entropy curve |
-| `a2c_results.csv` | A2C hyperparameter table |
-| `pg_comparison.png` | REINFORCE vs PPO vs A2C — side by side |
+| `pg_comparison.png` | REINFORCE vs PPO — side by side |
 | `cumulative_rewards.png` | All methods cumulative rewards (subplots) |
 | `convergence_comparison.png` | Episodes-to-convergence scatter plot |
 | `generalization_test.png` | Generalisation on 30 unseen seeds |
@@ -465,12 +458,6 @@ call `env.reset()` before the next episode.
 - Generalised Advantage Estimation (GAE)
 - Configurable clip range, entropy coefficient, value function coefficient
 - Multiple update epochs per rollout
-
-### A2C (Advantage Actor-Critic)
-- Synchronous actor-critic
-- n-step returns
-- RMSProp optimiser with configurable epsilon
-- Entropy regularisation
 
 ---
 
