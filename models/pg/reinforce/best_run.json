@@ -1,0 +1,13 @@
+{
+  "run": 6,
+  "learning_rate": 0.001,
+  "gamma": 0.9,
+  "hidden_layers": "[64, 64]",
+  "n_episodes": 600,
+  "entropy_coef": 0.02,
+  "baseline": true,
+  "mean_reward": 77.802,
+  "std_reward": 2.579,
+  "convergence_step": 50,
+  "train_time_s": 5.3
+}
