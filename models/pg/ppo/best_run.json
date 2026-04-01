@@ -9,8 +9,8 @@
   "clip_range": 0.2,
   "gae_lambda": 0.95,
   "net_arch": "[64, 64]",
-  "mean_reward": 89.702,
-  "std_reward": 5.945,
-  "convergence_step": 10000,
-  "train_time_s": 37.3
+  "mean_reward": 212.21,
+  "std_reward": 11.118,
+  "convergence_step": 8000,
+  "train_time_s": 88.4
 }

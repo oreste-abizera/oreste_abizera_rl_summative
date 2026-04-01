@@ -1,13 +1,13 @@
 {
-  "run": 6,
-  "learning_rate": 0.001,
-  "gamma": 0.9,
-  "hidden_layers": "[64, 64]",
-  "n_episodes": 600,
-  "entropy_coef": 0.02,
+  "run": 7,
+  "learning_rate": 0.0005,
+  "gamma": 0.95,
+  "hidden_layers": "[256, 128]",
+  "n_episodes": 1000,
+  "entropy_coef": 0.01,
   "baseline": true,
-  "mean_reward": 77.802,
-  "std_reward": 2.579,
-  "convergence_step": 50,
-  "train_time_s": 5.3
+  "mean_reward": 191.147,
+  "std_reward": 4.361,
+  "convergence_step": 0,
+  "train_time_s": 16.8
 }
