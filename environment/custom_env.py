@@ -76,7 +76,7 @@ class CodeMentorshipEnv(gym.Env):
         self,
         render_mode: Optional[str] = None,
         max_steps: int = 200,
-        total_tasks: int = 10,
+        total_tasks: int = 25,
         hint_budget: int = 15,
         seed: Optional[int] = None,
     ):

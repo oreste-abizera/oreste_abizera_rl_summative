@@ -42,7 +42,7 @@ PLOT_DIR = "plots"
 for d in [MODEL_DIR_PPO, MODEL_DIR_REINFORCE, PLOT_DIR]:
     os.makedirs(d, exist_ok=True)
 
-TRAIN_STEPS = 80_000
+TRAIN_STEPS = 200_000
 EVAL_EPISODES = 20
 
 
@@ -240,16 +240,16 @@ def reinforce_train_run(run_id: int, params: dict) -> dict:
 
 
 REINFORCE_GRID = [
-    {"lr": 1e-3,  "gamma": 0.99, "hidden": [64, 64],   "n_episodes": 600, "entropy_coef": 0.01, "baseline": True},
-    {"lr": 5e-4,  "gamma": 0.99, "hidden": [128, 128], "n_episodes": 600, "entropy_coef": 0.01, "baseline": True},
-    {"lr": 1e-3,  "gamma": 0.95, "hidden": [64, 64],   "n_episodes": 800, "entropy_coef": 0.05, "baseline": True},
-    {"lr": 2e-3,  "gamma": 0.99, "hidden": [64, 32],   "n_episodes": 500, "entropy_coef": 0.01, "baseline": False},
-    {"lr": 1e-4,  "gamma": 0.99, "hidden": [128, 64],  "n_episodes": 1000,"entropy_coef": 0.001,"baseline": True},
-    {"lr": 1e-3,  "gamma": 0.90, "hidden": [64, 64],   "n_episodes": 600, "entropy_coef": 0.02, "baseline": True},
-    {"lr": 5e-4,  "gamma": 0.95, "hidden": [256, 128], "n_episodes": 600, "entropy_coef": 0.01, "baseline": True},
-    {"lr": 1e-3,  "gamma": 0.99, "hidden": [64, 64],   "n_episodes": 600, "entropy_coef": 0.0,  "baseline": True},
-    {"lr": 3e-4,  "gamma": 0.99, "hidden": [128, 128], "n_episodes": 800, "entropy_coef": 0.05, "baseline": False},
-    {"lr": 1e-3,  "gamma": 0.99, "hidden": [64, 64],   "n_episodes": 600, "entropy_coef": 0.01, "baseline": True},  # replicate best
+    {"lr": 1e-3,  "gamma": 0.99, "hidden": [64, 64],   "n_episodes": 1000, "entropy_coef": 0.01, "baseline": True},
+    {"lr": 5e-4,  "gamma": 0.99, "hidden": [128, 128], "n_episodes": 1000, "entropy_coef": 0.01, "baseline": True},
+    {"lr": 1e-3,  "gamma": 0.95, "hidden": [64, 64],   "n_episodes": 1200, "entropy_coef": 0.05, "baseline": True},
+    {"lr": 2e-3,  "gamma": 0.99, "hidden": [64, 32],   "n_episodes": 800, "entropy_coef": 0.01, "baseline": False},
+    {"lr": 1e-4,  "gamma": 0.99, "hidden": [128, 64],  "n_episodes": 2000,"entropy_coef": 0.001,"baseline": True},
+    {"lr": 1e-3,  "gamma": 0.90, "hidden": [64, 64],   "n_episodes": 1000, "entropy_coef": 0.02, "baseline": True},
+    {"lr": 5e-4,  "gamma": 0.95, "hidden": [256, 128], "n_episodes": 1000, "entropy_coef": 0.01, "baseline": True},
+    {"lr": 1e-3,  "gamma": 0.99, "hidden": [64, 64],   "n_episodes": 1000, "entropy_coef": 0.0,  "baseline": True},
+    {"lr": 3e-4,  "gamma": 0.99, "hidden": [128, 128], "n_episodes": 1500, "entropy_coef": 0.05, "baseline": False},
+    {"lr": 1e-3,  "gamma": 0.99, "hidden": [64, 64],   "n_episodes": 1000, "entropy_coef": 0.01, "baseline": True},  # replicate best
 ]
 
 
