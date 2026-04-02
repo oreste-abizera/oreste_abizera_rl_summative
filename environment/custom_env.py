@@ -135,6 +135,8 @@ class CodeMentorshipEnv(gym.Env):
         self.done = False
         self.episode_reward = 0.0
         self.action_history = []
+        self.consecutive_action_count = 0
+        self.last_action_idx = -1
 
         return self._get_obs(), self._get_info()
 
@@ -157,6 +159,12 @@ class CodeMentorshipEnv(gym.Env):
         self.help_requested = bool(self.np_random.random() < p_help)
 
         # ---- Apply action ------------------------------------------------
+        if action == self.last_action_idx:
+            self.consecutive_action_count += 1
+        else:
+            self.consecutive_action_count = 1
+        self.last_action_idx = action
+
         if action == 0:  # provide_hint
             reward += self._apply_hint()
 
@@ -177,6 +185,10 @@ class CodeMentorshipEnv(gym.Env):
 
         elif action == 6:  # observe / do_nothing
             reward += self._apply_observe()
+
+        # ---- Repetition Penalty ------------------------------------------
+        if self.consecutive_action_count >= 3:
+            reward -= 0.1  # small nudge to diversify
 
         # ---- Student makes progress attempt (stochastic) -----------------
         attempt_success_prob = (
@@ -258,12 +270,16 @@ class CodeMentorshipEnv(gym.Env):
         if self.hints_used >= self.hint_budget:
             return -1.0  # over budget
         self.hints_used += 1
-        self.frustration = max(self.frustration - 0.08, 0.0)
-        self.engagement = min(self.engagement + 0.03, 1.0)
-        self.skill_level = min(self.skill_level + 0.01, 1.0)
-        # Good when student is frustrated; less good when not needed
-        reward = 1.5 - 2.0 * (1.0 - self.frustration)
-        reward -= 0.2  # small hint cost
+        self.frustration = max(self.frustration - 0.1, 0.0)
+        self.engagement = min(self.engagement + 0.05, 1.0)
+        self.skill_level = min(self.skill_level + 0.015, 1.0)
+        
+        # Consistent positive reward when student is frustrated
+        if self.frustration > 0.4:
+            reward = 1.2
+        else:
+            # neutral/small penalty if not needed (to encourage independence)
+            reward = -0.2
         return float(reward)
 
     def _apply_direct_solution(self) -> float:
@@ -281,10 +297,11 @@ class CodeMentorshipEnv(gym.Env):
         return 1.0
 
     def _apply_encouragement(self) -> float:
-        gain = 0.1 * (1.0 - self.engagement)  # diminishing returns
-        self.engagement = min(self.engagement + gain + 0.05, 1.0)
-        self.frustration = max(self.frustration - 0.05, 0.0)
-        return float(0.5 + gain)
+        gain = 0.2 * (1.0 - self.engagement)  # stronger diminishing returns
+        self.engagement = min(self.engagement + gain + 0.1, 1.0)
+        self.frustration = max(self.frustration - 0.08, 0.0)
+        # More valuable when engagement is low
+        return float(0.8 + gain)
 
     def _apply_socratic_question(self) -> float:
         # Great for high-skill students, frustrating for low-skill
@@ -292,10 +309,10 @@ class CodeMentorshipEnv(gym.Env):
             self.skill_level = min(self.skill_level + 0.04, 1.0)
             self.concept_mastery = min(self.concept_mastery + 0.06, 1.0)
             self.engagement = min(self.engagement + 0.04, 1.0)
-            return 2.0
+            return 1.5  # reduced from 2.0 to balance with others
         else:
-            self.frustration = min(self.frustration + 0.06, 1.0)
-            return -0.5
+            self.frustration = min(self.frustration + 0.08, 1.0)
+            return -0.8
 
     def _apply_share_resource(self) -> float:
         self.concept_mastery = min(self.concept_mastery + 0.04, 1.0)

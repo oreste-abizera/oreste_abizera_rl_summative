@@ -42,7 +42,7 @@ PLOT_DIR = "plots"
 for d in [MODEL_DIR_PPO, MODEL_DIR_REINFORCE, PLOT_DIR]:
     os.makedirs(d, exist_ok=True)
 
-TRAIN_STEPS = 200_000
+TRAIN_STEPS = 80_000
 EVAL_EPISODES = 20
 
 

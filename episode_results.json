@@ -1,0 +1,73 @@
+{
+  "algorithm": "PPO",
+  "episodes": [
+    {
+      "algorithm": "PPO",
+      "seed": 0,
+      "steps": 46,
+      "total_reward": 177.0,
+      "tasks_completed": 25,
+      "portfolio_score": 1.0,
+      "concept_mastery": 1.0,
+      "frustration": 0.0,
+      "engagement": 1.0,
+      "reward_per_step": 3.8478,
+      "action_distribution": {
+        "Provide Hint": 0,
+        "Give Direct Solution": 0,
+        "Assign Simpler Subtask": 30,
+        "Give Encouragement": 0,
+        "Pose Socratic Question": 16,
+        "Share Resource Link": 0,
+        "Observe / Do Nothing": 0
+      }
+    },
+    {
+      "algorithm": "PPO",
+      "seed": 1,
+      "steps": 54,
+      "total_reward": 182.3,
+      "tasks_completed": 25,
+      "portfolio_score": 1.0,
+      "concept_mastery": 1.0,
+      "frustration": 0.0,
+      "engagement": 1.0,
+      "reward_per_step": 3.3759,
+      "action_distribution": {
+        "Provide Hint": 0,
+        "Give Direct Solution": 0,
+        "Assign Simpler Subtask": 33,
+        "Give Encouragement": 0,
+        "Pose Socratic Question": 21,
+        "Share Resource Link": 0,
+        "Observe / Do Nothing": 0
+      }
+    },
+    {
+      "algorithm": "PPO",
+      "seed": 2,
+      "steps": 51,
+      "total_reward": 179.75,
+      "tasks_completed": 25,
+      "portfolio_score": 1.0,
+      "concept_mastery": 1.0,
+      "frustration": 0.0,
+      "engagement": 1.0,
+      "reward_per_step": 3.5245,
+      "action_distribution": {
+        "Provide Hint": 0,
+        "Give Direct Solution": 0,
+        "Assign Simpler Subtask": 33,
+        "Give Encouragement": 0,
+        "Pose Socratic Question": 18,
+        "Share Resource Link": 0,
+        "Observe / Do Nothing": 0
+      }
+    }
+  ],
+  "summary": {
+    "mean_reward": 179.683,
+    "std_reward": 2.164,
+    "mean_tasks_completed": 25.0
+  }
+}

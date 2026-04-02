@@ -1,15 +1,15 @@
 {
-  "run": 5,
+  "run": 7,
   "learning_rate": 0.001,
   "gamma": 0.99,
-  "buffer_size": 100000,
+  "buffer_size": 50000,
   "batch_size": 64,
-  "eps_end": 0.02,
-  "target_update_interval": 1000,
-  "net_arch": "[256, 256]",
-  "tau": 1.0,
-  "mean_reward": 208.808,
-  "std_reward": 10.151,
-  "convergence_step": 6000,
-  "train_time_s": 99.9
+  "eps_end": 0.05,
+  "target_update_interval": 500,
+  "net_arch": "[128, 128]",
+  "tau": 0.1,
+  "mean_reward": 179.44,
+  "std_reward": 3.0,
+  "convergence_step": 0,
+  "train_time_s": 33.6
 }
