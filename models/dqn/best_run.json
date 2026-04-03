@@ -8,8 +8,8 @@
   "target_update_interval": 500,
   "net_arch": "[128, 128]",
   "tau": 0.1,
-  "mean_reward": 179.44,
-  "std_reward": 3.0,
+  "mean_reward": 179.572,
+  "std_reward": 2.708,
   "convergence_step": 0,
-  "train_time_s": 33.6
+  "train_time_s": 99.9
 }

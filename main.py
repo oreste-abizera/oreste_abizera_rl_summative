@@ -145,7 +145,7 @@ def run_episode(model, algo_name: str, seed: int, render: bool) -> dict:
     print(f"  Seed           : {seed}")
     print(f"  Steps          : {step}")
     print(f"  Total Reward   : {total_reward:.3f}")
-    print(f"  Tasks Completed: {info['tasks_completed']} / 10")
+    print(f"  Tasks Completed: {info['tasks_completed']} / {env.total_tasks}")
     print(f"  Portfolio Score: {info['portfolio_score']:.3f}")
     print(f"  Concept Mastery: {info['concept_mastery']:.3f}")
     print(f"  Frustration    : {info['frustration']:.3f}")
@@ -221,7 +221,7 @@ def main():
     print(f"\n{'='*55}")
     print(f"  SUMMARY over {args.episodes} episode(s):")
     print(f"  Mean reward : {np.mean(rewards):.3f} ± {np.std(rewards):.3f}")
-    print(f"  Mean tasks  : {np.mean(tasks):.1f} / 10")
+    print(f"  Mean tasks  : {np.mean(tasks):.1f} / {episode_results[0]['tasks_completed'] if episode_results else 25}")
     print(f"{'='*55}\n")
 
     # JSON export (for API/frontend serialization)

@@ -6,8 +6,8 @@
   "n_episodes": 1000,
   "entropy_coef": 0.02,
   "baseline": true,
-  "mean_reward": 175.72,
-  "std_reward": 2.798,
+  "mean_reward": 176.48,
+  "std_reward": 3.021,
   "convergence_step": 0,
-  "train_time_s": 14.8
+  "train_time_s": 18.5
 }

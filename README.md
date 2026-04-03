@@ -293,14 +293,14 @@ by any frontend or REST API — see [Section 8](#8-json-api--frontend-integratio
 ═══════════════════════════════════════════════════════
   Algorithm      : PPO
   Seed           : 0
-  Steps          : 143
-  Total Reward   : 47.821
-  Tasks Completed: 7 / 10
-  Portfolio Score: 0.612
-  Concept Mastery: 0.734
-  Frustration    : 0.231
-  Engagement     : 0.805
-  Top Actions    : Socratic Question(38), Encouragement(27), Provide Hint(19)
+  Steps          : 40
+  Total Reward   : 178.600
+  Tasks Completed: 25 / 25
+  Portfolio Score: 1.000
+  Concept Mastery: 1.000
+  Frustration    : 0.000
+  Engagement     : 1.000
+  Top Actions    : Pose Socratic Question(27), Share Resource Link(11), Assign Simpler Subtask(2)
 ═══════════════════════════════════════════════════════
 ```
 
@@ -362,20 +362,20 @@ Output (`episode_results.json`):
     {
       "algorithm": "PPO",
       "seed": 0,
-      "steps": 143,
-      "total_reward": 47.821,
-      "tasks_completed": 7,
-      "portfolio_score": 0.612,
-      "concept_mastery": 0.734,
-      "frustration": 0.231,
-      "engagement": 0.805,
+      "steps": 40,
+      "total_reward": 178.6,
+      "tasks_completed": 25,
+      "portfolio_score": 1.0,
+      "concept_mastery": 1.0,
+      "frustration": 0.0,
+      "engagement": 1.0,
       "action_distribution": { ... }
     }
   ],
   "summary": {
-    "mean_reward": 47.821,
+    "mean_reward": 178.6,
     "std_reward": 0.0,
-    "mean_tasks_completed": 7.0
+    "mean_tasks_completed": 25.0
   }
 }
 ```
@@ -422,7 +422,7 @@ python training/pg_training.py
 
 ### Training is too slow
 
-Each run uses `TRAIN_STEPS = 80_000`. To do a quick smoke test, edit
+Each run uses `TRAIN_STEPS = 200_000`. To do a quick smoke test, edit
 `training/dqn_training.py` and `training/pg_training.py` and temporarily
 change:
 ```python
